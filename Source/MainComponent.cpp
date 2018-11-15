@@ -9,7 +9,7 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent()
+MainComponent::MainComponent() : numStrings (1)
 {
     // Make sure you set the size of the component after
     // you add any child components.
@@ -39,7 +39,12 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     
     fs = sampleRate;
     bufferSize = samplesPerBlockExpected;
-    string1 = new ViolinString(220.0, fs);
+    
+    for (int i = 0; i < numStrings; ++i)
+    {
+        ViolinString* newString = new ViolinString (196.0 * (i + 2) * 0.95, fs);
+        violinStrings.add(newString);
+    }
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
@@ -55,8 +60,13 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
             for (int i = 0; i < bufferToFill.buffer->getNumSamples(); i++)
             {
                
-                float output = string1->bow() * 1000;
-//                std::cout << output << std::endl;
+                float output = 0.0;
+                for (int j = 0; j < numStrings; ++j)
+                {
+                    output = output + violinStrings[j]->bow() * 1000;
+                }
+                output = output / numStrings;
+                
                 if (std::abs(output) > 1)
                 {
                     std::cout << "wait" << std::endl;
@@ -99,7 +109,10 @@ void MainComponent::resized()
 
 void MainComponent::mouseDown(const MouseEvent &e)
 {
-    string1->setBow (true);
+    for (int j = 0; j < numStrings; ++j)
+    {
+        violinStrings[j]->setBow (true);
+    }
 }
 
 void MainComponent::mouseDrag(const MouseEvent &e)
@@ -107,12 +120,17 @@ void MainComponent::mouseDrag(const MouseEvent &e)
     double maxVb = 0.2;
     double Vb = (e.y - getHeight() * 0.5) / (static_cast<double> (getHeight() * 0.5)) * maxVb;
     double Fb = e.x / (static_cast<double> (getWidth())) * 100;
-    string1->setVb (Vb);
-    std::cout << Fb << std::endl;
-    string1->setFb (Fb);
+    for (int j = 0; j < numStrings; ++j)
+    {
+        violinStrings[j]->setVb (Vb);
+        violinStrings[j]->setFb (Fb);
+    }
 }
 
 void MainComponent::mouseUp(const MouseEvent &e)
 {
-    string1->setBow (false);
+    for (int j = 0; j < numStrings; ++j)
+    {
+        violinStrings[j]->setBow (false);
+    }
 }

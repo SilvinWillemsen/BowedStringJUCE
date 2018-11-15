@@ -40,7 +40,7 @@ private:
     double fs;
     double bufferSize;
     
-    ScopedPointer<ViolinString> string1;
-
+    OwnedArray<ViolinString> violinStrings;
+    int numStrings;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
