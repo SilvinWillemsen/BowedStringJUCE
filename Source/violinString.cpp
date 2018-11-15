@@ -89,7 +89,7 @@ double ViolinString::bow()
     newtonRaphson();
     
     double excitation = k * k * (1 / h) * Fb * BM * q * exp (-a * q * q);
-    for (int l = 0; l < N; ++l)
+    for (int l = 2; l < N - 2; ++l)
     {
         uNext[l] = (2 * u[l] - uPrev[l] + lambdaSq * (u[l+1] - 2 * u[l] + u[l-1])
                     - muSq * (u[l+2] - 4 * u[l+1] + 6 * u[l] - 4 * u[l-1] + u[l-2])

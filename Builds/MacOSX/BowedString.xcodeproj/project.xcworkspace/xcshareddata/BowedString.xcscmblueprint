@@ -1,0 +1,37 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "807546820CEF9675F8C5AFD401172220F6E5B0F8",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "E7309B11F0CDF1B3A097E485DBD6E7A4670E9109" : 0,
+    "DEBAC9C6799FD4E8074B3BAF720718E3C3499FA0" : 0,
+    "807546820CEF9675F8C5AFD401172220F6E5B0F8" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "AB7FD4A7-CF26-42CF-B63B-AB4E7246D284",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "E7309B11F0CDF1B3A097E485DBD6E7A4670E9109" : "",
+    "DEBAC9C6799FD4E8074B3BAF720718E3C3499FA0" : "..\/JUCE",
+    "807546820CEF9675F8C5AFD401172220F6E5B0F8" : "BowedStringJUCE\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "BowedString",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Builds\/MacOSX\/BowedString.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/SilvinWillemsen\/BowedStringJUCE.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "807546820CEF9675F8C5AFD401172220F6E5B0F8"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/WeAreROLI\/JUCE.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "DEBAC9C6799FD4E8074B3BAF720718E3C3499FA0"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/SilvinWillemsen\/BowedStringJUCE.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "E7309B11F0CDF1B3A097E485DBD6E7A4670E9109"
+    }
+  ]
+}

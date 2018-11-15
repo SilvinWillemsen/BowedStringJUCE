@@ -57,7 +57,7 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
                
                 float output = string1->bow() * 1000;
 //                std::cout << output << std::endl;
-                if (output > 1)
+                if (std::abs(output) > 1)
                 {
                     std::cout << "wait" << std::endl;
                 }
@@ -100,6 +100,16 @@ void MainComponent::resized()
 void MainComponent::mouseDown(const MouseEvent &e)
 {
     string1->setBow (true);
+}
+
+void MainComponent::mouseDrag(const MouseEvent &e)
+{
+    double maxVb = 0.2;
+    double Vb = (e.y - getHeight() * 0.5) / (static_cast<double> (getHeight() * 0.5)) * maxVb;
+    double Fb = e.x / (static_cast<double> (getWidth())) * 100;
+    string1->setVb (Vb);
+    std::cout << Fb << std::endl;
+    string1->setFb (Fb);
 }
 
 void MainComponent::mouseUp(const MouseEvent &e)
