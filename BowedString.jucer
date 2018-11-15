@@ -3,9 +3,31 @@
 <JUCERPROJECT id="vqtoc4" name="BowedString" projectType="guiapp" jucerVersion="5.4.1">
   <MAINGROUP id="JotRAj" name="BowedString">
     <GROUP id="{2EDA46B3-DAF3-C4F9-361A-CF54DD6F2812}" name="Source">
-      <FILE id="XM0aMQ" name="ViolinString.cpp" compile="1" resource="0"
-            file="Source/ViolinString.cpp"/>
-      <FILE id="BOxvYm" name="ViolinString.h" compile="0" resource="0" file="Source/ViolinString.h"/>
+      <FILE id="zIhh8H" name="SenselWrapper.h" compile="0" resource="0" file="Source/SenselWrapper.h"/>
+      <GROUP id="{FFDB1533-D385-7784-E752-BF5D327E9E12}" name="lib">
+        <FILE id="uaZd9d" name="sensel.c" compile="1" resource="0" file="Source/lib/sensel.c"/>
+        <FILE id="qmFWOI" name="sensel.h" compile="0" resource="0" file="Source/lib/sensel.h"/>
+        <FILE id="lwZqoy" name="sensel_device.h" compile="0" resource="0" file="Source/lib/sensel_device.h"/>
+        <FILE id="UOgnbc" name="sensel_device_vidpid.h" compile="0" resource="0"
+              file="Source/lib/sensel_device_vidpid.h"/>
+        <FILE id="JyYbtd" name="sensel_protocol.h" compile="0" resource="0"
+              file="Source/lib/sensel_protocol.h"/>
+        <FILE id="Sz7s2N" name="sensel_register.c" compile="1" resource="0"
+              file="Source/lib/sensel_register.c"/>
+        <FILE id="RB4oJf" name="sensel_register.h" compile="0" resource="0"
+              file="Source/lib/sensel_register.h"/>
+        <FILE id="r8mtCY" name="sensel_register_map.h" compile="0" resource="0"
+              file="Source/lib/sensel_register_map.h"/>
+        <FILE id="hOkVAB" name="sensel_serial.h" compile="0" resource="0" file="Source/lib/sensel_serial.h"/>
+        <FILE id="l69DCB" name="sensel_serial_linux.c" compile="1" resource="0"
+              file="Source/lib/sensel_serial_linux.c"/>
+        <FILE id="OoMCYY" name="sensel_serial_win.c" compile="1" resource="0"
+              file="Source/lib/sensel_serial_win.c"/>
+        <FILE id="mFUwi8" name="sensel_types.h" compile="0" resource="0" file="Source/lib/sensel_types.h"/>
+      </GROUP>
+      <FILE id="kHoj4M" name="violinString.cpp" compile="1" resource="0"
+            file="Source/violinString.cpp"/>
+      <FILE id="wM2PDb" name="violinString.h" compile="0" resource="0" file="Source/violinString.h"/>
       <FILE id="fSawjK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="hCWCMO" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
