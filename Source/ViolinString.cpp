@@ -12,7 +12,7 @@
 #include "ViolinString.h"
 
 //==============================================================================
-ViolinString::ViolinString(double freq, double fs) : fs(fs), freq(freq)
+ViolinString::ViolinString (double freq, double fs) : fs (fs), freq (freq)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -32,6 +32,7 @@ ViolinString::ViolinString(double freq, double fs) : fs(fs), freq(freq)
                      + 16.0 * kappa * kappa * k * k)) * 0.5);
     
     N = floor (1.0 / h);                    // Number of gridpoints
+    N = 30;
     h = 1.0 / N;                            // Recalculate gridspacing
 
     // Initialise vectors
@@ -98,11 +99,20 @@ double ViolinString::bow()
                                                 - (uPrev[l+1] - 2 * uPrev[l] + uPrev[l-1]))) / (1 + s0 * k);
         if (l == bp && isBowing == true)
         {
+            count = 0;
             uNext[l] = uNext[l] - excitation;
         }
     }
     uPrev = u;
     u = uNext;
+    if (!isBowing)
+    {
+        ++count;
+        if (count > fs * 3)
+        {
+            deactivate();
+        }
+    }
     return uNext[pickup];
 }
 

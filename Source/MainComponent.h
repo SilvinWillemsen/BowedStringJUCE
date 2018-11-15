@@ -16,7 +16,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent   : public AudioAppComponent
+class MainComponent   : public AudioAppComponent, public KeyListener
 {
 public:
     //==============================================================================
@@ -34,6 +34,9 @@ public:
     void mouseDown (const MouseEvent& e) override;
     void mouseUp (const MouseEvent& e) override;
     void mouseDrag (const MouseEvent& e) override;
+    
+    virtual bool keyPressed (const KeyPress &key, Component *originatingComponent) override;
+    virtual bool keyStateChanged (bool isKeyDown, Component *originatingComponent) override;
 
 private:
     //==============================================================================
@@ -42,5 +45,8 @@ private:
     
     OwnedArray<ViolinString> violinStrings;
     int numStrings;
+    int octave;
+    std::vector<const char> keys = {'A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K'};
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

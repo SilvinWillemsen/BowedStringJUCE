@@ -9,7 +9,7 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() : numStrings (1)
+MainComponent::MainComponent() : numStrings (25), octave (0)
 {
     // Make sure you set the size of the component after
     // you add any child components.
@@ -18,6 +18,8 @@ MainComponent::MainComponent() : numStrings (1)
 
     // specify the number of input and output channels that we want to open
     setAudioChannels (2, 2);
+    setWantsKeyboardFocus(true);
+    addKeyListener(this);
 }
 
 MainComponent::~MainComponent()
@@ -39,11 +41,11 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     
     fs = sampleRate;
     bufferSize = samplesPerBlockExpected;
-    
-    for (int i = 0; i < numStrings; ++i)
+    int test = 0;
+    for (int i = test; i < numStrings + test; ++i)
     {
-        ViolinString* newString = new ViolinString (196.0 * (i + 2) * 0.95, fs);
-        violinStrings.add(newString);
+//        violinStrings.add(new ViolinString (196.0 * (i + 1) * (0.985 - (0.025 * pow(1.5, i))), fs));
+        violinStrings.add(new ViolinString (110.0 * pow(2, i / 12.0) + 1, fs));
     }
 }
 
@@ -63,7 +65,11 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
                 float output = 0.0;
                 for (int j = 0; j < numStrings; ++j)
                 {
-                    output = output + violinStrings[j]->bow() * 1000;
+                    if (violinStrings[j]->isActive())
+                    {
+                        float stringSound = violinStrings[j]->bow() * 1000;
+                        output = output + stringSound;
+                    }
                 }
                 output = output / numStrings;
                 
@@ -96,7 +102,14 @@ void MainComponent::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-
+    
+    for (int i = 0; i < numStrings; ++i)
+    {
+        g.setColour (Colour::fromRGB(50 + i * 200.0 / static_cast<double> (numStrings), 0, 0));
+        g.fillRect(round(i * getWidth() / static_cast<double> (numStrings)), 0, round(getWidth() / static_cast<double> (numStrings)), getHeight());
+        g.setColour(Colours::grey);
+        g.drawRect(round(i * getWidth() / static_cast<double> (numStrings)), 0, round(getWidth() / static_cast<double> (numStrings)), getHeight(), 2);
+    }
     // You can add your drawing code here!
 }
 
@@ -109,21 +122,20 @@ void MainComponent::resized()
 
 void MainComponent::mouseDown(const MouseEvent &e)
 {
-    for (int j = 0; j < numStrings; ++j)
-    {
-        violinStrings[j]->setBow (true);
-    }
+    float scaledEX = e.x / static_cast<double> (getWidth());
+    int idx = floor(scaledEX * static_cast<double> (numStrings));
+    violinStrings[idx]->setBow (true);
 }
 
 void MainComponent::mouseDrag(const MouseEvent &e)
 {
     double maxVb = 0.2;
     double Vb = (e.y - getHeight() * 0.5) / (static_cast<double> (getHeight() * 0.5)) * maxVb;
-    double Fb = e.x / (static_cast<double> (getWidth())) * 100;
+//    double Fb = e.x / (static_cast<double> (getWidth())) * 100;
     for (int j = 0; j < numStrings; ++j)
     {
         violinStrings[j]->setVb (Vb);
-        violinStrings[j]->setFb (Fb);
+//        violinStrings[j]->setFb (Fb);
     }
 }
 
@@ -133,4 +145,37 @@ void MainComponent::mouseUp(const MouseEvent &e)
     {
         violinStrings[j]->setBow (false);
     }
+}
+
+bool MainComponent::keyPressed(const juce::KeyPress &key, juce::Component *originatingComponent)
+{
+    switch (key.getKeyCode())
+    {
+        case 'Z':
+            octave = 0;
+            break;
+        case 'X':
+            octave = 12;
+            break;
+    }
+    return true;
+}
+
+bool MainComponent::keyStateChanged(bool isKeyDown, Component *originatingComponent)
+{
+    for (int i = 0; i < 13; i++)
+    {
+        char k = keys[i];
+        
+        if (KeyPress::isKeyCurrentlyDown(k))
+        {
+            violinStrings[i + octave]->setBow(true);
+            violinStrings[i + octave]->activate();
+        }
+        else
+        {
+            violinStrings[i + octave]->setBow(false);
+        }
+    }
+    return false;
 }
