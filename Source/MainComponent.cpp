@@ -74,9 +74,9 @@ void MainComponent::timerCallback()
             string->setFb(Fb);
         }
         
-        //cout << "Finger[" << 0 << "] force: " << force * 1000 + 50 << "\n";
-        //cout << "Finger[" << 0 << "] x: " << sensel.mFingers[0].x.load() << "\n";
-        //cout << "Finger[" << 0 << "] y: " << sensel.mFingers[0].y.load() << "\n";
+        cout << "Finger[" << 0 << "] force: " << force * 1000 + 50 << "\n";
+        cout << "Finger[" << 0 << "] delta x: " << sensel.mFingers[0].delta_x.load() << "\n";
+        cout << "Finger[" << 0 << "] delta y: " << sensel.mFingers[0].delta_y.load() << "\n";
     } else
     {
         for (auto string : violinStrings)

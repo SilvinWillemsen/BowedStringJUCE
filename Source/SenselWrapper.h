@@ -8,10 +8,12 @@ using namespace std;
 
 struct Contact
 {
-    atomic<bool> state;
-    atomic<float> force;
-    atomic<float> x;
-    atomic<float> y;
+    atomic<bool> state{false};
+    atomic<float> force{0.0};
+    atomic<float> x{0.0};
+    atomic<float> y{0.0};
+    atomic<float> delta_x{0.0};
+    atomic<float> delta_y{0.0};
 };
 
 class Sensel
@@ -44,7 +46,7 @@ class Sensel
         senselAllocateFrameData(handle, &frame);
         //Start scanning the Sensel device
         senselStartScanning(handle);
-        
+
         for (int i = 0; i < mFingers.size(); i++)
             mFingers[i].state.store(false);
     }
@@ -64,7 +66,7 @@ class Sensel
             fingers[i].force.store(mFingers[i].force.load());
             fingers[i].x.store(mFingers[i].x.load());
             fingers[i].y.store(mFingers[i].y.load());
-            
+
             //cout << "Finger[" << i << "]: " << fingers[i].state.load() << "\n";
         }
     }
@@ -73,7 +75,7 @@ class Sensel
     {
         for (int i = 0; i < mFingers.size(); i++)
             mFingers[i].state.store(false);
-        
+
         if (senselDetected)
         {
             unsigned int num_frames = 0;
@@ -93,34 +95,34 @@ class Sensel
                     for (int c = 0; c < frame->n_contacts; c++)
                     {
                         unsigned int state = frame->contacts[c].state;
+                        float force = frame->contacts[c].total_force;
+                        float x = frame->contacts[c].x_pos;
+                        float y = frame->contacts[c].y_pos;
+                        float delta_x = frame->contacts[c].delta_x;
+                        float delta_y = frame->contacts[c].delta_y;
 
                         if (state == CONTACT_START)
                         {
-                            float force = frame->contacts[c].total_force;
-                            float x = frame->contacts[c].x_pos;
-                            float y = frame->contacts[c].y_pos;
-
                             if (c < mFingers.size())
                             {
                                 mFingers[c].state.store(true);
                                 mFingers[c].force.store(force);
                                 mFingers[c].x.store(x);
                                 mFingers[c].y.store(y);
+                                mFingers[c].delta_x.store(delta_x);
+                                mFingers[c].delta_y.store(delta_y);
                             }
                         }
-                        else if(state == CONTACT_MOVE)
+                        else if (state == CONTACT_MOVE)
                         {
-                            
-                            float force = frame->contacts[c].total_force;
-                            float x = frame->contacts[c].x_pos;
-                            float y = frame->contacts[c].y_pos;
-
                             if (c < mFingers.size())
                             {
                                 mFingers[c].state.store(true);
                                 mFingers[c].force.store(force);
                                 mFingers[c].x.store(x);
                                 mFingers[c].y.store(y);
+                                mFingers[c].delta_x.store(delta_x);
+                                mFingers[c].delta_y.store(delta_y);
                             }
                         }
                         else if (state == CONTACT_END)
@@ -131,6 +133,8 @@ class Sensel
                                 mFingers[c].force.store(0);
                                 mFingers[c].x.store(0);
                                 mFingers[c].y.store(0);
+                                mFingers[c].delta_x.store(0);
+                                mFingers[c].delta_y.store(0);
                             }
                         }
                     }

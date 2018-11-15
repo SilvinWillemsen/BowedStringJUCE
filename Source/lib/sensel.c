@@ -458,6 +458,7 @@ static unsigned char _senselParseContactFrame(SenselDevice *device, unsigned cha
       }
       if (bit_mask & CONTACT_MASK_DELTAS)
       {
+          //printf("hey\n");
         memcpy(&prtcl_raw_contact.delta_x, data_buf, CONTACT_DELTAS_SEND_SIZE);
         data_buf = data_buf + CONTACT_DELTAS_SEND_SIZE;
 
