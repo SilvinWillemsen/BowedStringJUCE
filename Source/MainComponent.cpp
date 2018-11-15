@@ -9,7 +9,7 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() : numStrings (25), octave (0)
+MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (25), octave (0), polyphony (5)
 {
     // Make sure you set the size of the component after
     // you add any child components.
@@ -20,6 +20,7 @@ MainComponent::MainComponent() : numStrings (25), octave (0)
     setAudioChannels (2, 2);
     setWantsKeyboardFocus(true);
     addKeyListener(this);
+    
 }
 
 MainComponent::~MainComponent()
@@ -45,8 +46,9 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     for (int i = test; i < numStrings + test; ++i)
     {
 //        violinStrings.add(new ViolinString (196.0 * (i + 1) * (0.985 - (0.025 * pow(1.5, i))), fs));
-        violinStrings.add(new ViolinString (110.0 * pow(2, i / 12.0) + 1, fs));
+        violinStrings.add(new ViolinString (110.0 * pow (2, i / 12.0) + 1, fs));
     }
+    activeStrings.resize (polyphony, violinStrings[0]);
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
@@ -67,15 +69,17 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
                 {
                     if (violinStrings[j]->isActive())
                     {
-                        float stringSound = violinStrings[j]->bow() * 1000;
+                        float stringSound = violinStrings[j]->bow() * 600;
                         output = output + stringSound;
                     }
                 }
-                output = output / numStrings;
+//                output = output / 10;
                 
-                if (std::abs(output) > 1)
+                if (output > maxOut)
                 {
-                    std::cout << "wait" << std::endl;
+                    output = maxOut;
+                } else if (output < minOut) {
+                    output = minOut;
                 }
                 channelData[i] = output;
             }
@@ -125,6 +129,7 @@ void MainComponent::mouseDown(const MouseEvent &e)
     float scaledEX = e.x / static_cast<double> (getWidth());
     int idx = floor(scaledEX * static_cast<double> (numStrings));
     violinStrings[idx]->setBow (true);
+    violinStrings[idx]->activate();
 }
 
 void MainComponent::mouseDrag(const MouseEvent &e)
@@ -166,11 +171,16 @@ bool MainComponent::keyStateChanged(bool isKeyDown, Component *originatingCompon
     for (int i = 0; i < 13; i++)
     {
         char k = keys[i];
-        
+        int idx = i + octave;
         if (KeyPress::isKeyCurrentlyDown(k))
         {
-            violinStrings[i + octave]->setBow(true);
-            violinStrings[i + octave]->activate();
+            violinStrings[idx]->setBow(true);
+            if (!violinStrings[idx]->isActive())
+            {
+                violinStrings[idx]->activate();
+                activeStrings[currentPoly % polyphony] = violinStrings[idx];
+                ++currentPoly;
+            }
         }
         else
         {

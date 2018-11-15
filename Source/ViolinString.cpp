@@ -32,7 +32,7 @@ ViolinString::ViolinString (double freq, double fs) : fs (fs), freq (freq)
                      + 16.0 * kappa * kappa * k * k)) * 0.5);
     
     N = floor (1.0 / h);                    // Number of gridpoints
-    N = 30;
+    N = 30; //Set N for tuning
     h = 1.0 / N;                            // Recalculate gridspacing
 
     // Initialise vectors
@@ -87,8 +87,12 @@ void ViolinString::resized()
 
 double ViolinString::bow()
 {
+//    double gammaChange = gamma + 5 * sin (12 * double_Pi * t / fs);
+//    ++t;
+//    lambdaSq = pow (gammaChange * k / h, 2);
+//    Vb = 0.2 * sin (12.0 * double_Pi * t / fs);
+    ++t;
     newtonRaphson();
-    
     double excitation = k * k * (1 / h) * Fb * BM * q * exp (-a * q * q);
     for (int l = 2; l < N - 2; ++l)
     {

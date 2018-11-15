@@ -45,5 +45,6 @@ private:
     bool active = false;
     
     unsigned long count;
+    unsigned long t = 0;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViolinString)
 };

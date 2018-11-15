@@ -42,11 +42,17 @@ private:
     //==============================================================================
     double fs;
     double bufferSize;
-    
+    float minOut;
+    float maxOut;
     OwnedArray<ViolinString> violinStrings;
     int numStrings;
     int octave;
     std::vector<const char> keys = {'A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K'};
+    
+    std::vector<ViolinString*> activeStrings;
+    int polyphony;
+    int currentPoly = 0;
+    
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
