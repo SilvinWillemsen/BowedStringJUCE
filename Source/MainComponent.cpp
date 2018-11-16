@@ -9,7 +9,7 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (25), octave (0), polyphony (5)
+MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (1), octave (0), polyphony (5)
 {
     // Make sure you set the size of the component after
     // you add any child components.
@@ -21,6 +21,9 @@ MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (25), o
     setWantsKeyboardFocus(true);
     addKeyListener(this);
     
+    struct timeval tp;
+    gettimeofday(&tp, NULL);
+    timePrev = tp.tv_sec * 1000 + tp.tv_usec / 1000;
 }
 
 MainComponent::~MainComponent()
@@ -136,11 +139,13 @@ void MainComponent::mouseDrag(const MouseEvent &e)
 {
     double maxVb = 0.2;
     double Vb = (e.y - getHeight() * 0.5) / (static_cast<double> (getHeight() * 0.5)) * maxVb;
-//    double Fb = e.x / (static_cast<double> (getWidth())) * 100;
     for (int j = 0; j < numStrings; ++j)
     {
         violinStrings[j]->setVb (Vb);
-//        violinStrings[j]->setFb (Fb);
+    }
+    for (int j = 0; j < numStrings; ++j)
+    {
+        violinStrings[j]->setBowPos(e.x / static_cast<double> (getWidth()));
     }
 }
 

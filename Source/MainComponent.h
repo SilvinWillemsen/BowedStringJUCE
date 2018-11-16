@@ -7,7 +7,7 @@
 */
 
 #pragma once
-
+#include "sys/time.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ViolinString.h"
 
@@ -31,6 +31,8 @@ public:
     //==============================================================================
     void paint (Graphics& g) override;
     void resized() override;
+    
+    // Mouse functions
     void mouseDown (const MouseEvent& e) override;
     void mouseUp (const MouseEvent& e) override;
     void mouseDrag (const MouseEvent& e) override;
@@ -53,6 +55,8 @@ private:
     int polyphony;
     int currentPoly = 0;
     
+    double eYPrev = 0;
+    long int timePrev = 0;;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

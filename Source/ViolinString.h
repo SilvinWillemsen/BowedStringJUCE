@@ -32,6 +32,7 @@ public:
     void setBow (bool val) { isBowing = val; };
     void setVb (double val) { Vb = val; }
     void setFb (double val) { Fb = val; }
+    void setBowPos (double val) { bp = floor(N * val);}
     
     bool isActive() { return active; };
     void activate() { active = true; };
