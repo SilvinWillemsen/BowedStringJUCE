@@ -29,6 +29,7 @@ public:
     void newtonRaphson();
     double getOutput();
     
+    void setFrequency(double freq);
     void setBow (bool val) { isBowing = val; };
     void setVb (double val) { Vb = val; }
     void setFb (double val) { Fb = val; }

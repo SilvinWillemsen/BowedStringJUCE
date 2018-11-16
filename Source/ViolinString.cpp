@@ -33,7 +33,7 @@ ViolinString::ViolinString(double freq, double fs) : fs(fs), freq(freq)
     
     N = floor (1.0 / h);                    // Number of gridpoints
     h = 1.0 / N;                            // Recalculate gridspacing
-
+    N = 30; 
     // Initialise vectors
     u.resize (N);
     uPrev.resize (N);
@@ -60,6 +60,29 @@ ViolinString::ViolinString(double freq, double fs) : fs(fs), freq(freq)
     
     bp = floor (N / 4.0);
     
+}
+
+void ViolinString::setFrequency(double freq)
+{
+    gamma = freq * 2;                       // Wave speed
+    
+    kappa = sqrt (B) * (gamma / double_Pi); // Stiffness Factor
+    
+    // Grid spacing
+    h = sqrt ((gamma * gamma * k * k + 4.0 * s1 * k
+               + sqrt (pow (gamma * gamma * k * k + 4.0 * s1 * k, 2.0)
+                       + 16.0 * kappa * kappa * k * k)) * 0.5);
+    
+    N = floor (1.0 / h);                    // Number of gridpoints
+    h = 1.0 / N;                            // Recalculate gridspacing
+    N = 30;
+    
+    // Courant numbers
+    lambdaSq = pow (gamma * k / h, 2);
+    muSq = pow (k * kappa / (h * h), 2);
+    
+    kOh = (kappa * kappa) / (h * h);
+    gOh = (gamma * gamma) / (h * h);
 }
 
 ViolinString::~ViolinString()

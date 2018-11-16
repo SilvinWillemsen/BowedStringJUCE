@@ -62,27 +62,38 @@ void MainComponent::timerCallback()
         newX = sensel.mFingers[0].x.load() / 240.0f;
         newY = sensel.mFingers[0].y.load() / 139.0f;
 
-        double velocityX = (newX - xpos)/60.0f;
-        double velocityY = (newY - ypos)/60.0f;
+        //double velocityX = (newX - xpos)/60.0f;
+        //double velocityY = (newY - ypos)/60.0f;
 
         xpos = newX;
         ypos = newY;
 
         force = (sensel.mFingers[0].force.load() / 8192.0f) * 10;
+        
         double maxVb = 0.2;
-        double Vb = fabs(0.5 - ypos) * 2 * maxVb; // / (static_cast<double> (getHeight() * 0.5)) * maxVb;
-        double Fb = xpos * 100;
+        double Vb = sensel.mFingers[0].delta_y.load() * maxVb; // / (static_cast<double> (getHeight() * 0.5)) * maxVb;
+        double Fb = force * 100;
+        
+        double finger2X = 0.0;
+        
+        if (sensel.mFingers[1].state.load())
+            finger2X = sensel.mFingers[1].x.load() / 240.0f;
+            
+    
+       // violinStrings[0].setFrequency(finger2X*3520+196);
         
         for (auto string : violinStrings)
         {
             string->setBow(true);
             string->setVb(Vb);
             string->setFb(Fb);
+            string->setFrequency(196.0*0.2);//finger2X*3520+196);
+            
         }
         
-        // cout << "Finger[" << 0 << "] force: " << force * 1000 + 50 << "\n";
-        // cout << "Finger[" << 0 << "] delta x: " << velocityX << "\n";
-        // cout << "Finger[" << 0 << "] delta y: " << velocityY << "\n";
+        //cout << "Finger[" << 0 << "] force: " << force * 1000 + 50 << "\n";
+        //cout << "Finger[" << 0 << "] delta x: " << sensel.mFingers[0].delta_x.load() << "\n";
+        //secout << "Finger[" << 0 << "] delta y: " << sensel.mFingers[0].delta_y.load() << "\n";
     } else
     {
         for (auto string : violinStrings)
