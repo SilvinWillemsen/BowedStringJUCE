@@ -42,6 +42,10 @@ class MainComponent : public AudioAppComponent,
     double bufferSize;
     Sensel sensel;
     
+    float force = 0.0;
+    float xpos = 0.0f;
+    float ypos = 0.0f;
+
     OwnedArray<ViolinString> violinStrings;
     int numStrings;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)

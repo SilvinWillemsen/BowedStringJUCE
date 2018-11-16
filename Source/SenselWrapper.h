@@ -44,6 +44,9 @@ class Sensel
         senselSetFrameContent(handle, FRAME_CONTENT_CONTACTS_MASK);
         //Allocate a frame of data, must be done before reading frame data
         senselAllocateFrameData(handle, &frame);
+        
+        senselSetContactsMask(handle, CONTACT_MASK_DELTAS);
+        
         //Start scanning the Sensel device
         senselStartScanning(handle);
 

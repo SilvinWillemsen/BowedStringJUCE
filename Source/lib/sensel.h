@@ -52,7 +52,7 @@
 #define FRAME_CONTENT_ACCEL_MASK       0x08  // Mask indicating that the frame includes acceleromter data
 
 #define CONTACT_MASK_ELLIPSE           0x01  // Mask indicating that the contact data contains ellipse info
-#define CONTACT_MASK_DELTAS            0x01  // Mask indicating that the contact data contains deltas info
+#define CONTACT_MASK_DELTAS            0x02  // Mask indicating that the contact data contains deltas info
 #define CONTACT_MASK_BOUNDING_BOX      0x04  // Mask indicating that the contact data contains bound box info
 #define CONTACT_MASK_PEAK              0x08  // Mask indicating that the contact data contains peak info
 
