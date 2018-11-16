@@ -58,21 +58,13 @@ void MainComponent::timerCallback()
     // check sensel
     sensel.check();
 
-    float newX = 0.0f;
-    float newY = 0.0f;
 
     if (sensel.mFingers[0].state.load())
     {
-        newX = sensel.mFingers[0].x.load() / 240.0f;
-        newY = sensel.mFingers[0].y.load() / 139.0f;
+        xpos = sensel.mFingers[0].x.load();
+        ypos = sensel.mFingers[0].y.load();
 
-        //double velocityX = (newX - xpos)/60.0f;
-        //double velocityY = (newY - ypos)/60.0f;
-
-        xpos = newX;
-        ypos = newY;
-
-        force = (sensel.mFingers[0].force.load() / 8192.0f) * 10;
+        force = sensel.mFingers[0].force.load() * 10;
         
         double maxVb = 0.2;
         double Vb = sensel.mFingers[0].delta_y.load() * maxVb; // / (static_cast<double> (getHeight() * 0.5)) * maxVb;
@@ -83,8 +75,8 @@ void MainComponent::timerCallback()
         
         if (sensel.mFingers[1].state.load())
         {
-            finger2X = sensel.mFingers[1].x.load() / 240.0f;
-            finger2Force = (sensel.mFingers[1].force.load() / 8192.0f);
+            finger2X = sensel.mFingers[1].x.load();
+            finger2Force = sensel.mFingers[1].force.load();
             violinStrings[0]->setFingerOn(true);
             violinStrings[0]->setFingerPoint(finger2X);
             violinStrings[0]->setFingerForce(finger2Force);

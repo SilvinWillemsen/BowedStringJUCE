@@ -98,9 +98,9 @@ class Sensel
                     for (int c = 0; c < frame->n_contacts; c++)
                     {
                         unsigned int state = frame->contacts[c].state;
-                        float force = frame->contacts[c].total_force;
-                        float x = frame->contacts[c].x_pos;
-                        float y = frame->contacts[c].y_pos;
+                        float force = frame->contacts[c].total_force / 8192.0f;
+                        float x = frame->contacts[c].x_pos / 240.0f;
+                        float y = frame->contacts[c].y_pos / 139.0f;
                         float delta_x = frame->contacts[c].delta_x;
                         float delta_y = frame->contacts[c].delta_y;
 
