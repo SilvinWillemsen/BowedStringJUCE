@@ -33,11 +33,18 @@ public:
     void setBow (bool val) { isBowing = val; };
     void setVb (double val) { Vb = val; }
     void setFb (double val) { Fb = val; }
+    
+    bool isActive() { return active; };
+    void activate() { active = true; };
+    void deactivate() { active = false; };
 
 private:
 
     double fs, freq, gamma, k, s0, s1, B, kappa, h, N, lambdaSq, muSq, kOh, gOh, a, BM, Vb, Fb, pickup, tol, q, qPrev, bp, b, eps;
     bool isBowing = false;
     std::vector<double> u, uPrev, uNext;
+    bool active = false;
+    
+    unsigned long count;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ViolinString)
 };
