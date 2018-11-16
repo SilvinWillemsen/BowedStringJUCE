@@ -17,7 +17,7 @@
     your controls and content.
 */
 class MainComponent : public AudioAppComponent,
-                      public Timer
+                      public Timer, public KeyListener
 {
   public:
     //==============================================================================
@@ -32,21 +32,35 @@ class MainComponent : public AudioAppComponent,
     //==============================================================================
     void paint(Graphics &g) override;
     void resized() override;
-    void mouseDown(const MouseEvent &e) override;
-    void mouseUp(const MouseEvent &e) override;
-    void mouseDrag(const MouseEvent &e) override;
+
+    void mouseDown (const MouseEvent& e) override;
+    void mouseUp (const MouseEvent& e) override;
+    void mouseDrag (const MouseEvent& e) override;
     void timerCallback() override; 
-  private:
+    
+    virtual bool keyPressed (const KeyPress &key, Component *originatingComponent) override;
+    virtual bool keyStateChanged (bool isKeyDown, Component *originatingComponent) override;
+
+private:
     //==============================================================================
     double fs;
     double bufferSize;
     Sensel sensel;
+     
+    float minOut;
+    float maxOut;
+    OwnedArray<ViolinString> violinStrings;
+    int numStrings;
+    int octave;
+    std::vector<const char> keys = {'A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K'};
+    
+    std::vector<ViolinString*> activeStrings;
+    int polyphony;
+    int currentPoly = 0;
     
     float force = 0.0;
     float xpos = 0.0f;
     float ypos = 0.0f;
-
-    OwnedArray<ViolinString> violinStrings;
-    int numStrings;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
