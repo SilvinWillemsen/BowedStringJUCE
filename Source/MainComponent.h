@@ -17,7 +17,7 @@
     your controls and content.
 */
 class MainComponent : public AudioAppComponent,
-                      public Timer,
+                      public HighResolutionTimer,
                       public KeyListener
 {
 public:
@@ -37,7 +37,7 @@ public:
   void mouseDown(const MouseEvent &e) override;
   void mouseUp(const MouseEvent &e) override;
   void mouseDrag(const MouseEvent &e) override;
-  void timerCallback() override;
+  void hiResTimerCallback() override;
 
   virtual bool keyPressed(const KeyPress &key, Component *originatingComponent) override;
   virtual bool keyStateChanged(bool isKeyDown, Component *originatingComponent) override;

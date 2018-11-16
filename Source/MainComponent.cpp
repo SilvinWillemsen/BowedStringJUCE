@@ -19,7 +19,7 @@ MainComponent::MainComponent() : minOut(-1.0), maxOut(1.0), numStrings(1), octav
 
     // specify the number of input and output channels that we want to open
     setAudioChannels(0, 2);
-    startTimerHz(60);
+    startTimer(6.666);
     setWantsKeyboardFocus(true);
     addKeyListener(this);
 }
@@ -53,7 +53,7 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
     activeStrings.resize(polyphony, violinStrings[0]);
 }
 
-void MainComponent::timerCallback()
+void MainComponent::hiResTimerCallback()
 {
     // check sensel
     sensel.check();
