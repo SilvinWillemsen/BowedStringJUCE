@@ -10,7 +10,7 @@
 
 //==============================================================================
 
-MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (1), octave (0), polyphony (5)
+MainComponent::MainComponent() : minOut(-1.0), maxOut(1.0), numStrings(1), octave(0), polyphony(5)
 {
     // Make sure you set the size of the component after
     // you add any child components.
@@ -50,7 +50,7 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
         violinStrings.add(new ViolinString(196.0 * (i + 1) * 0.95, fs));
         violinStrings[i]->activate();
     }
-    activeStrings.resize (polyphony, violinStrings[0]);
+    activeStrings.resize(polyphony, violinStrings[0]);
 }
 
 void MainComponent::timerCallback()
@@ -58,54 +58,53 @@ void MainComponent::timerCallback()
     // check sensel
     sensel.check();
 
-
     if (sensel.mFingers[0].state.load())
     {
         xpos = sensel.mFingers[0].x.load();
         ypos = sensel.mFingers[0].y.load();
 
         force = sensel.mFingers[0].force.load() * 10;
-        
+
         double maxVb = 0.2;
         double Vb = sensel.mFingers[0].delta_y.load() * maxVb; // / (static_cast<double> (getHeight() * 0.5)) * maxVb;
         double Fb = force * 100;
+
         
-        double finger2X = 0.0;
-        double finger2Force = 0.0;
-        
+
         if (sensel.mFingers[1].state.load())
         {
             finger2X = sensel.mFingers[1].x.load();
             finger2Force = sensel.mFingers[1].force.load();
             violinStrings[0]->setFingerOn(true);
-            violinStrings[0]->setFingerPoint(finger2X);
-            violinStrings[0]->setFingerForce(finger2Force);
-        } else {
-            violinStrings[0]->setFingerOn (false);
-        }
             
-    
-       // violinStrings[0].setFrequency(finger2X*3520+196);
-        
+        }
+        else
+        {
+            //violinStrings[0]->setFingerOn(false);
+        }
+
+        // violinStrings[0].setFrequency(finger2X*3520+196);
+
         for (auto string : violinStrings)
         {
             string->setBow(true);
             string->setVb(Vb);
             string->setFb(Fb);
             string->setBowPos(xpos);
-//            string->setFrequency(finger2X*250+196);
+            string->setFingerPoint(finger2X);
+            string->setFingerForce(finger2Force);
+            //            string->setFrequency(finger2X*250+196);
         }
-        
+
         //cout << "Finger[" << 0 << "] force: " << force * 1000 + 50 << "\n";
         //cout << "Finger[" << 0 << "] delta x: " << sensel.mFingers[0].delta_x.load() << "\n";
         //secout << "Finger[" << 0 << "] delta y: " << sensel.mFingers[0].delta_y.load() << "\n";
-    } else
+    }
+    else
     {
         for (auto string : violinStrings)
             string->setBow(false);
     }
-    
-    
 }
 
 void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
@@ -134,7 +133,9 @@ void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill
                 if (output > maxOut)
                 {
                     output = maxOut;
-                } else if (output < minOut) {
+                }
+                else if (output < minOut)
+                {
                     output = minOut;
                 }
                 channelData[i] = output;
@@ -161,14 +162,14 @@ void MainComponent::releaseResources()
 void MainComponent::paint(Graphics &g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-    
+    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
+
     for (int i = 0; i < numStrings; ++i)
     {
-        g.setColour (Colour::fromRGB(50 + i * 200.0 / static_cast<double> (numStrings), 0, 0));
-        g.fillRect(round(i * getWidth() / static_cast<double> (numStrings)), 0, round(getWidth() / static_cast<double> (numStrings)), getHeight());
+        g.setColour(Colour::fromRGB(50 + i * 200.0 / static_cast<double>(numStrings), 0, 0));
+        g.fillRect(round(i * getWidth() / static_cast<double>(numStrings)), 0, round(getWidth() / static_cast<double>(numStrings)), getHeight());
         g.setColour(Colours::grey);
-        g.drawRect(round(i * getWidth() / static_cast<double> (numStrings)), 0, round(getWidth() / static_cast<double> (numStrings)), getHeight(), 2);
+        g.drawRect(round(i * getWidth() / static_cast<double>(numStrings)), 0, round(getWidth() / static_cast<double>(numStrings)), getHeight(), 2);
     }
     // You can add your drawing code here!
 }
@@ -186,9 +187,9 @@ void MainComponent::mouseDown(const MouseEvent &e)
     {
         violinStrings[j]->setBow(true);
     }
-    float scaledEX = e.x / static_cast<double> (getWidth());
-    int idx = floor(scaledEX * static_cast<double> (numStrings));
-    violinStrings[idx]->setBow (true);
+    float scaledEX = e.x / static_cast<double>(getWidth());
+    int idx = floor(scaledEX * static_cast<double>(numStrings));
+    violinStrings[idx]->setBow(true);
     violinStrings[idx]->activate();
 }
 
@@ -216,12 +217,12 @@ bool MainComponent::keyPressed(const juce::KeyPress &key, juce::Component *origi
 {
     switch (key.getKeyCode())
     {
-        case 'Z':
-            octave = 0;
-            break;
-        case 'X':
-            octave = 12;
-            break;
+    case 'Z':
+        octave = 0;
+        break;
+    case 'X':
+        octave = 12;
+        break;
     }
     return true;
 }
