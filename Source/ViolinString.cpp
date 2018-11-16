@@ -32,9 +32,9 @@ ViolinString::ViolinString (double freq, double fs) : fs (fs), freq (freq)
                      + 16.0 * kappa * kappa * k * k)) * 0.5);
     
     N = floor (1.0 / h);                    // Number of gridpoints
-    N = 30; //Set N for tuning
+    N = 80; //Set N for tuning
     h = 1.0 / N;                            // Recalculate gridspacing
-    N = 30; 
+//    N = 80;
     // Initialise vectors
     u.resize (N);
     uPrev.resize (N);
@@ -53,7 +53,7 @@ ViolinString::ViolinString (double freq, double fs) : fs (fs), freq (freq)
     
     Vb = 0.2;                               // Bowing speed
     Fb = 50;                                // Bowing force / total mass of bow
-    pickup = floor(N/3);                    // Pickup position
+    pickup = floor(3 * N / 4);                    // Pickup position
     
     // Initialise variables for Newton Raphson
     tol = 1e-4;
@@ -63,20 +63,20 @@ ViolinString::ViolinString (double freq, double fs) : fs (fs), freq (freq)
     
 }
 
-void ViolinString::setFrequency(double freq)
+void ViolinString::setFrequency (double freq)
 {
     gamma = freq * 2;                       // Wave speed
     
-    kappa = sqrt (B) * (gamma / double_Pi); // Stiffness Factor
+//    kappa = sqrt (B) * (gamma / double_Pi); // Stiffness Factor
     
     // Grid spacing
     h = sqrt ((gamma * gamma * k * k + 4.0 * s1 * k
                + sqrt (pow (gamma * gamma * k * k + 4.0 * s1 * k, 2.0)
                        + 16.0 * kappa * kappa * k * k)) * 0.5);
-    
+
     N = floor (1.0 / h);                    // Number of gridpoints
     h = 1.0 / N;                            // Recalculate gridspacing
-    N = 30;
+    N = 80;
     
     // Courant numbers
     lambdaSq = pow (gamma * k / h, 2);
@@ -130,6 +130,16 @@ double ViolinString::bow()
             uNext[l] = uNext[l] - excitation;
         }
     }
+    if (fingerOn)
+    {
+        int fingerPos = floor(fp * N);
+        if (ff > 1)
+        {
+            std::cout << "wait" << std::endl;
+        }
+        uNext[fingerPos] = uNext[fingerPos] * ff;
+    }
+    
     uPrev = u;
     u = uNext;
     if (!isBowing)
@@ -137,7 +147,7 @@ double ViolinString::bow()
         ++count;
         if (count > fs * 3)
         {
-            deactivate();
+//            deactivate();
         }
     }
     return uNext[pickup];

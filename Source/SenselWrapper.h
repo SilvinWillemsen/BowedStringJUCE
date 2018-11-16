@@ -144,8 +144,8 @@ class Sensel
                 }
             }
         }
-        else
-            fprintf(stdout, "No Sensel device found.\n");
+        //else
+        //    fprintf(stdout, "No Sensel device found.\n");
     }
 
     array<Contact, 20> mFingers;

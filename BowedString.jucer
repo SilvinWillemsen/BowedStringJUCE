@@ -25,9 +25,9 @@
               file="Source/lib/sensel_serial_win.c"/>
         <FILE id="mFUwi8" name="sensel_types.h" compile="0" resource="0" file="Source/lib/sensel_types.h"/>
       </GROUP>
-      <FILE id="kHoj4M" name="violinString.cpp" compile="1" resource="0"
-            file="Source/violinString.cpp"/>
-      <FILE id="wM2PDb" name="violinString.h" compile="0" resource="0" file="Source/violinString.h"/>
+      <FILE id="ElMqKp" name="ViolinString.cpp" compile="1" resource="0"
+            file="Source/ViolinString.cpp"/>
+      <FILE id="AFLRLA" name="ViolinString.h" compile="0" resource="0" file="Source/ViolinString.h"/>
       <FILE id="fSawjK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="hCWCMO" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>

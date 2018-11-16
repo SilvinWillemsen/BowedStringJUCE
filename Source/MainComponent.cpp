@@ -47,7 +47,8 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
     for (int i = 0; i < numStrings; ++i)
     {
         //ViolinString* newString = new ViolinString (196.0 * (i + 2) * 0.95, fs);
-        violinStrings.add(new ViolinString(196.0 * (i + 2) * 0.95, fs));
+        violinStrings.add(new ViolinString(196.0 * (i + 1) * 0.95, fs));
+        violinStrings[i]->activate();
     }
     activeStrings.resize (polyphony, violinStrings[0]);
 }
@@ -78,9 +79,18 @@ void MainComponent::timerCallback()
         double Fb = force * 100;
         
         double finger2X = 0.0;
+        double finger2Force = 0.0;
         
         if (sensel.mFingers[1].state.load())
+        {
             finger2X = sensel.mFingers[1].x.load() / 240.0f;
+            finger2Force = (sensel.mFingers[1].force.load() / 8192.0f);
+            violinStrings[0]->setFingerOn(true);
+            violinStrings[0]->setFingerPoint(finger2X);
+            violinStrings[0]->setFingerForce(finger2Force);
+        } else {
+            violinStrings[0]->setFingerOn (false);
+        }
             
     
        // violinStrings[0].setFrequency(finger2X*3520+196);
@@ -90,8 +100,8 @@ void MainComponent::timerCallback()
             string->setBow(true);
             string->setVb(Vb);
             string->setFb(Fb);
-            string->setFrequency(196.0*0.2);//finger2X*3520+196);
-            
+            string->setBowPos(xpos);
+//            string->setFrequency(finger2X*250+196);
         }
         
         //cout << "Finger[" << 0 << "] force: " << force * 1000 + 50 << "\n";
