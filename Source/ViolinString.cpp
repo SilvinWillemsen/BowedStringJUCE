@@ -34,7 +34,7 @@ ViolinString::ViolinString (double freq, double fs) : fs (fs), freq (freq)
     N = floor (1.0 / h);                    // Number of gridpoints
     N = 80; //Set N for tuning
     h = 1.0 / N;                            // Recalculate gridspacing
-//    N = 80;
+
     // Initialise vectors
     u.resize (N);
     uPrev.resize (N);
@@ -66,7 +66,7 @@ ViolinString::ViolinString (double freq, double fs) : fs (fs), freq (freq)
 void ViolinString::setFrequency (double freq)
 {
     gamma = freq * 2;                       // Wave speed
-    
+   // we dont want to set the kappa according to the gamma 
 //    kappa = sqrt (B) * (gamma / double_Pi); // Stiffness Factor
     
     // Grid spacing
