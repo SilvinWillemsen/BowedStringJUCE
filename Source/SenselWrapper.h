@@ -14,6 +14,7 @@ struct Contact
     atomic<float> y{0.0};
     atomic<float> delta_x{0.0};
     atomic<float> delta_y{0.0};
+    atomic<int> fingerID{-1};
 };
 
 class Sensel
@@ -114,6 +115,9 @@ class Sensel
                                 mFingers[c].y.store(y);
                                 mFingers[c].delta_x.store(delta_x);
                                 mFingers[c].delta_y.store(delta_y);
+                                //idx++;
+                                mFingers[c].fingerID.store(c);
+                                cout << "Finger[" << c << "] ID: " << mFingers[c].fingerID.load() << "\n";
                             }
                         }
                         else if (state == CONTACT_MOVE)
@@ -132,12 +136,17 @@ class Sensel
                         {
                             if (c < mFingers.size())
                             {
+                                cout << "Finger[" << c << "] ID: " << mFingers[c].fingerID.load() << "\n";
                                 mFingers[c].state.store(false);
                                 mFingers[c].force.store(0);
                                 mFingers[c].x.store(0);
                                 mFingers[c].y.store(0);
                                 mFingers[c].delta_x.store(0);
                                 mFingers[c].delta_y.store(0);
+                                mFingers[c].fingerID.store(-1);
+                                //idx--;
+                                
+                                cout << "ID[" << c << "] ID: " << idx << "\n";
                             }
                         }
                     }
@@ -149,6 +158,7 @@ class Sensel
     }
 
     array<Contact, 20> mFingers;
+    int idx = -1;
     bool senselDetected = false;
 
   private:

@@ -57,53 +57,64 @@ void MainComponent::hiResTimerCallback()
 {
     // check sensel
     sensel.check();
+    unsigned long size = sensel.mFingers.size();
 
-    if (sensel.mFingers[0].state.load())
+    double maxVb = 0.2;
+    double Vb = 0.0;
+    double Fb = force * 100;
+
+    double finger2X = 0.0;
+    double finger2Force = 0.0;
+    bool state1 = false;
+    bool state2 = false;
+    
+    for (int f = 0; f < size; f++)
     {
-        xpos = sensel.mFingers[0].x.load();
-        ypos = sensel.mFingers[0].y.load();
-
-        force = sensel.mFingers[0].force.load() * 10;
-
-        double maxVb = 0.2;
-        double Vb = sensel.mFingers[0].delta_y.load() * maxVb; // / (static_cast<double> (getHeight() * 0.5)) * maxVb;
-        double Fb = force * 100;
+        ///</if (sensel.mFingers[f].state.load())
+        //    cout << "Finger[" << f << "] ID: " << sensel.mFingers[f].fingerID.load() << "\n";
 
         
-
-        if (sensel.mFingers[1].state.load())
+        int index1 = sensel.mFingers[f].fingerID.load();
+        if (index1 == 0) // first press is indexed 0
         {
-            finger2X = sensel.mFingers[1].x.load();
-            finger2Force = sensel.mFingers[1].force.load();
-            violinStrings[0]->setFingerOn(true);
+            state1 = sensel.mFingers[f].state.load();
+            xpos = sensel.mFingers[f].x.load();
+            ypos = sensel.mFingers[f].y.load();
             
+            force = sensel.mFingers[f].force.load() * 10;
+
+            Vb = sensel.mFingers[f].delta_y.load() * maxVb;
+            Fb = force * 100;
+
+            //cout << "Finger[" << 0 << "] ID: " << sensel.mFingers[0].fingerID.load() << "\n";
+            //cout << "Finger[" << 0 << "] delta x: " << sensel.mFingers[0].delta_x.load() << "\n";
+            //secout << "Finger[" << 0 << "] delta y: " << sensel.mFingers[0].delta_y.load() << "\n";
         }
-        else
+
+        int index2 = sensel.mFingers[f].fingerID.load();
+        
+        
+        
+        if (index2 == 1)
         {
-            //violinStrings[0]->setFingerOn(false);
+            state2 = sensel.mFingers[f].state.load();
+            finger2X = sensel.mFingers[f].x.load();
+            finger2Force = sensel.mFingers[f].force.load();
+
+            //violinStrings[0]->setFingerOn(true);
         }
 
-        // violinStrings[0].setFrequency(finger2X*3520+196);
-
-        for (auto string : violinStrings)
-        {
-            string->setBow(true);
-            string->setVb(Vb);
-            string->setFb(Fb);
-            string->setBowPos(xpos);
-            string->setFingerPoint(finger2X);
-            string->setFingerForce(finger2Force);
-            //            string->setFrequency(finger2X*250+196);
-        }
-
-        //cout << "Finger[" << 0 << "] force: " << force * 1000 + 50 << "\n";
-        //cout << "Finger[" << 0 << "] delta x: " << sensel.mFingers[0].delta_x.load() << "\n";
-        //secout << "Finger[" << 0 << "] delta y: " << sensel.mFingers[0].delta_y.load() << "\n";
+        //cout << "Finger[" << 0 << "] ID: " << sensel.mFingers[0].fingerID.load() << "\n";
     }
-    else
+    for (auto string : violinStrings)
     {
-        for (auto string : violinStrings)
-            string->setBow(false);
+        string->setBow(state1);
+        string->setVb(Vb);
+        string->setFb(Fb);
+        string->setBowPos(xpos);
+        string->setFingerPoint(finger2X);
+        string->setFingerForce(finger2Force);
+        string->setFingerOn(state2);
     }
 }
 

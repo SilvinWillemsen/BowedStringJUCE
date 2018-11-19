@@ -63,8 +63,7 @@ private:
   float force = 0.0;
   float xpos = 0.0f;
   float ypos = 0.0f;
-  double finger2X = 0.0;
-  double finger2Force = 0.0;
+
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };
