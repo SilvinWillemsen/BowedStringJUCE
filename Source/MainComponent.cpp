@@ -9,7 +9,7 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (25), octave (0), polyphony (5)
+MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (25), octave (0), polyphony (12)
 {
     // Make sure you set the size of the component after
     // you add any child components.
@@ -17,7 +17,7 @@ MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (25), o
     setSize (800, 600);
 
     // specify the number of input and output channels that we want to open
-    setAudioChannels (2, 2);
+    setAudioChannels (0, 2);
     setWantsKeyboardFocus(true);
     addKeyListener(this);
     
@@ -48,7 +48,7 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 //        violinStrings.add(new ViolinString (196.0 * (i + 1) * (0.985 - (0.025 * pow(1.5, i))), fs));
         violinStrings.add(new ViolinString (110.0 * pow (2, i / 12.0) + 1, fs));
     }
-    activeStrings.resize (polyphony, violinStrings[0]);
+    activeStrings.resize (polyphony, nullptr);
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
@@ -178,8 +178,25 @@ bool MainComponent::keyStateChanged(bool isKeyDown, Component *originatingCompon
             if (!violinStrings[idx]->isActive())
             {
                 violinStrings[idx]->activate();
-                activeStrings[currentPoly % polyphony] = violinStrings[idx];
-                ++currentPoly;
+                bool inVector = false;
+                for (int j = 0; j < polyphony; ++j)
+                {
+                    // If the currently pressed string is in the polyphony vector, do nothing
+                    if (activeStrings[j] == violinStrings[idx])
+                    {
+                        inVector = true;
+                        break;
+                    }
+                }
+                if (!inVector)
+                {
+                    if (activeStrings[currentPoly % polyphony] != nullptr)
+                    {
+                        activeStrings[currentPoly % polyphony]->deactivate();
+                    }
+                    activeStrings[currentPoly % polyphony] = violinStrings[idx];
+                    ++currentPoly;
+                }
             }
         }
         else
