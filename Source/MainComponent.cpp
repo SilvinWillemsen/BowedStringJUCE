@@ -9,7 +9,9 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (25), octave (0), polyphony (12)
+MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (25), octave (0), polyphony (2),
+    keyboardComponent (keyboardState, MidiKeyboardComponent::horizontalKeyboard),
+    startTime (Time::getMillisecondCounterHiRes() * 0.001)
 {
     // Make sure you set the size of the component after
     // you add any child components.
@@ -21,9 +23,27 @@ MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (25), o
     setWantsKeyboardFocus(true);
     addKeyListener(this);
     
-    struct timeval tp;
-    gettimeofday(&tp, NULL);
-    timePrev = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+    //MIDI
+    addAndMakeVisible(keyboardComponent);
+    keyboardState.addListener (this);
+    
+    addAndMakeVisible (midiInputList);
+    midiInputList.setTextWhenNoChoicesAvailable ("No MIDI Inputs Enabled");
+    auto midiInputs = MidiInput::getDevices();
+    midiInputList.addItemList (midiInputs, 1);
+    midiInputList.onChange = [this] { setMidiInput (midiInputList.getSelectedItemIndex()); };
+    // find the first enabled device and use that by default
+    for (auto midiInput : midiInputs)
+    {
+        if (deviceManager.isMidiInputEnabled (midiInput))
+        {
+            setMidiInput (midiInputs.indexOf (midiInput));
+            break;
+        }
+    }
+    // if no enabled devices were found just use the first one in the list
+    if (midiInputList.getSelectedId() == 0)
+        setMidiInput (0);
 }
 
 MainComponent::~MainComponent()
@@ -49,7 +69,7 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     for (int i = test; i < numStrings + test; ++i)
     {
 //        violinStrings.add(new ViolinString (196.0 * (i + 1) * (0.985 - (0.025 * pow(1.5, i))), fs));
-        violinStrings.add(new ViolinString (110.0 * pow (2, i / 12.0) + 1, fs));
+        violinStrings.add(new ViolinString (118 * pow (2, i / 12.0) + 1, fs));
     }
     activeStrings.resize (polyphony, nullptr);
 }
@@ -76,7 +96,6 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
                         output = output + stringSound;
                     }
                 }
-//                output = output / 10;
                 
                 if (output > maxOut)
                 {
@@ -125,6 +144,12 @@ void MainComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
+//    keyboardComponent.setBounds(0, 2.0 * getHeight() / 3.0, getWidth(), getHeight() / 3.0);
+    auto area = getLocalBounds();
+    
+    midiInputList    .setBounds (area.removeFromTop (36).removeFromRight (getWidth() - 150).reduced (8));
+    keyboardComponent.setBounds (area.removeFromBottom (80).reduced(8));
+    midiMessagesBox  .setBounds (area.reduced (8));
 }
 
 void MainComponent::mouseDown(const MouseEvent &e)
@@ -210,4 +235,109 @@ bool MainComponent::keyStateChanged(bool isKeyDown, Component *originatingCompon
         }
     }
     return false;
+}
+
+void MainComponent::logMessage(const String &m)
+{
+    midiMessagesBox.moveCaretToEnd();
+    midiMessagesBox.insertTextAtCaret (m + newLine);
+}
+
+void MainComponent::setMidiInput(int index)
+{
+    auto list = MidiInput::getDevices();
+    deviceManager.removeMidiInputCallback (list[lastInputIndex], this);
+    auto newInput = list[index];
+    if (! deviceManager.isMidiInputEnabled (newInput))
+        deviceManager.setMidiInputEnabled (newInput, true);
+    deviceManager.addMidiInputCallback (newInput, this);
+    midiInputList.setSelectedId (index + 1, dontSendNotification);
+    lastInputIndex = index;
+}
+
+void MainComponent::handleIncomingMidiMessage(MidiInput *source, const MidiMessage &message)
+{
+    const ScopedValueSetter<bool> scopedInputFlag (isAddingFromMidiInput, true);
+    keyboardState.processNextMidiEvent (message);
+    postMessageToList (message, source->getName());
+}
+
+void MainComponent::handleNoteOn(MidiKeyboardState *, int midiChannel, int midiNoteNumber, float velocity)
+{
+    if (midiNoteNumber >= 48 && midiNoteNumber <= 73)
+    {
+        int idx = midiNoteNumber - 48;
+        violinStrings[idx]->setBow(true);
+        if (!violinStrings[idx]->isActive())
+        {
+            violinStrings[idx]->activate();
+            bool inVector = false;
+            for (int j = 0; j < polyphony; ++j)
+            {
+                // If the currently pressed string is in the polyphony vector, do nothing
+                if (activeStrings[j] == violinStrings[idx])
+                {
+                    inVector = true;
+                    break;
+                }
+            }
+            if (!inVector)
+            {
+                if (activeStrings[currentPoly % polyphony] != nullptr)
+                {
+                    activeStrings[currentPoly % polyphony]->deactivate();
+                }
+                activeStrings[currentPoly % polyphony] = violinStrings[idx];
+                ++currentPoly;
+            }
+        }
+    }
+    
+    if (! isAddingFromMidiInput)
+    {
+        auto m = MidiMessage::noteOn (midiChannel, midiNoteNumber, velocity);
+        m.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
+        postMessageToList (m, "On-Screen Keyboard");
+    }
+}
+
+void MainComponent::handleNoteOff(MidiKeyboardState *, int midiChannel, int midiNoteNumber, float velocity)
+{
+    if (midiNoteNumber >= 48 && midiNoteNumber <= 73)
+    {
+        int idx = midiNoteNumber - 48;
+        violinStrings[idx]->setBow(false);
+    }
+    if (! isAddingFromMidiInput)
+    {
+        auto m = MidiMessage::noteOff (midiChannel, midiNoteNumber);
+        m.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
+        postMessageToList (m, "On-Screen Keyboard");
+    }
+}
+
+void MainComponent::postMessageToList(const MidiMessage &message, const String &source)
+{
+    (new IncomingMessageCallback (this, message, source))->post();
+}
+
+void MainComponent::addMessageToList(const MidiMessage &message, const String &source)
+{
+    auto time = message.getTimeStamp() - startTime;
+    
+    auto hours   = ((int) (time / 3600.0)) % 24;
+    auto minutes = ((int) (time / 60.0)) % 60;
+    auto seconds = ((int) time) % 60;
+    auto millis  = ((int) (time * 1000.0)) % 1000;
+    
+    auto timecode = String::formatted ("%02d:%02d:%02d.%03d",
+                                       hours,
+                                       minutes,
+                                       seconds,
+                                       millis);
+    
+    auto description = getMidiMessageDescription (message);
+    
+    String midiMessageString (timecode + "  -  " + description + " (" + source + ")"); // [7]
+    logMessage (midiMessageString);
 }
