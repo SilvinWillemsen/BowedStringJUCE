@@ -9,7 +9,7 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (25), octave (0), polyphony (2),
+MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (25), octave (0), polyphony (12),
     keyboardComponent (keyboardState, MidiKeyboardComponent::horizontalKeyboard),
     startTime (Time::getMillisecondCounterHiRes() * 0.001)
 {
@@ -260,6 +260,12 @@ void MainComponent::handleIncomingMidiMessage(MidiInput *source, const MidiMessa
     const ScopedValueSetter<bool> scopedInputFlag (isAddingFromMidiInput, true);
     keyboardState.processNextMidiEvent (message);
     postMessageToList (message, source->getName());
+    if (message.isAftertouch())
+    {
+        
+//        int note = MidiMessage::getMidiNoteName (message.getNoteNumber(), true, true, 3);
+        std::cout << message.getAfterTouchValue() << std::endl;
+    }
 }
 
 void MainComponent::handleNoteOn(MidiKeyboardState *, int midiChannel, int midiNoteNumber, float velocity)
