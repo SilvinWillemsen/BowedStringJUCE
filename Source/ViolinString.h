@@ -11,7 +11,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-
+using namespace std;
 //==============================================================================
 /*
 */
@@ -32,19 +32,20 @@ public:
     void setFrequency (double freq);
     void setFingerPoint (double val) { fp = val; };
     void setFingerForce (double val) { ff = val; };
-    void setFingerOn (bool val) { fingerOn = val; };
+    //void setFingerOn (bool val) { fingerOn = val; };
     
-    void setBow (bool val) { isBowing = val; };
-    void setVb (double val) { Vb = val; }
-    void setFb (double val) { Fb = val; }
-    void setBowPos (double val) { bp = floor (val * N); }
+    void setBow (bool val) { _isBowing.store(val); };
+    void setVb (double val) { _Vb.store(val); }
+    void setFb (double val) { _Fb.store(val); }
+    void setBowPos (double val) { _bp.store(floor (val * N)); }
 
 private:
 
-    double fs, freq, gamma, k, s0, s1, B, kappa, h, N, lambdaSq, muSq, kOh, gOh, a, BM, Vb, Fb, pickup, tol, q, qPrev, bp, b, eps, fp, ff;
-    bool isBowing = false;
-    bool fingerOn = false;
-    std::vector<double> u, uPrev, uNext;
+    double fs, freq, gamma, k, s0, s1, B, kappa, h, N, lambdaSq, muSq, kOh, gOh, a, BM, pickup, tol, q, qPrev, b, eps, fp, ff;
+    atomic<double> _Vb, _Fb, _bp;
+    atomic<bool> _isBowing{false};
+
+    vector<double> u, uPrev, uNext;
     bool active = false;
     
     unsigned long count;

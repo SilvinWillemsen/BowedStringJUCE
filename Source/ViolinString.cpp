@@ -50,15 +50,15 @@ ViolinString::ViolinString (double freq, double fs) : fs (fs), freq (freq)
     BM = sqrt(2 * a) * exp(0.5);
 
     
-    Vb = 0.2;                               // Bowing speed
-    Fb = 50;                                // Bowing force / total mass of bow
+    _Vb.store(0.2);                               // Bowing speed
+    _Fb.store(50);                                // Bowing force / total mass of bow
     pickup = floor(3 * N / 4);                    // Pickup position
     
     // Initialise variables for Newton Raphson
     tol = 1e-4;
     qPrev = 0;
     
-    bp = floor (N / 4.0);
+    _bp.store(floor (N / 4.0));
     
 }
 
@@ -75,7 +75,7 @@ void ViolinString::setFrequency (double freq)
 
     N = floor (1.0 / h);                    // Number of gridpoints
     h = 1.0 / N;                            // Recalculate gridspacing
-    N = 80;
+    N = 100;
     
     // Courant numbers
     lambdaSq = pow (gamma * k / h, 2);
@@ -109,6 +109,9 @@ void ViolinString::resized()
 
 double ViolinString::bow()
 {
+    double Fb = _Fb.load();
+    int bp = _bp.load();
+    bool isBowing = _isBowing.load();
     newtonRaphson();
     double excitation = k * k * (1 / h) * Fb * BM * q * exp (-a * q * q);
     for (int l = 2; l < N - 2; ++l)
@@ -140,6 +143,9 @@ double ViolinString::bow()
 
 void ViolinString::newtonRaphson()
 {
+    double Vb = _Vb.load();
+    double Fb = _Fb.load();
+    int bp = _bp.load();
     
     b = 2.0 / k * Vb - (2.0 / (k * k)) * (u[bp] - uPrev[bp])
     - gOh * (u[bp + 1] - 2 * u[bp] + u[bp - 1])

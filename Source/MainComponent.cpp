@@ -44,12 +44,9 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
 
     for (int i = 0; i < numStrings; ++i)
     {
-        //ViolinString* newString = new ViolinString (196.0 * (i + 2) * 0.95, fs);
-        violinStrings.add(new ViolinString(196.0 * (i + 1), fs));
+        violinStrings.add(new ViolinString(110.0 * (i + 1), fs));
     }
-
-    //activeStrings.resize(polyphony, violinStrings[0]);
-
+    
     for (int i = 0; i < amountOfSensels; i++)
         sensels.add(new Sensel(i)); // chooses the device in the sensel device list
 }
@@ -60,6 +57,8 @@ void MainComponent::hiResTimerCallback()
 
     for (auto sensel : sensels)
     {
+        if (sensel->senselDetected)
+        {
         sensel->check();
 
         unsigned int fingerCount = sensel->contactAmount;
@@ -73,16 +72,21 @@ void MainComponent::hiResTimerCallback()
             Vb[index] = sensel->fingers[f].delta_y * maxVb;
             Fb[index] = sensel->fingers[f].force * 1000;
         }
-        //cout << "Sensel[" << sensel->senselIndex << "] Finger ID: " << sensel->fingers[f].fingerID << "\n";
+        
+        violinStrings[index]->setBow(state[index]);
+        violinStrings[index]->setVb(Vb[index]);
+        violinStrings[index]->setFb(Fb[index]);
+        violinStrings[index]->setBowPos(xpos[index]);
+        }
     }
    
-    for (int i = 0; i < numStrings; i++)
-    {
-        violinStrings[i]->setBow(state[i]);
-        violinStrings[i]->setVb(Vb[i]);
-        violinStrings[i]->setFb(Fb[i]);
-        violinStrings[i]->setBowPos(xpos[i]);
-    }
+//    for (int i = 0; i < numStrings; i++)
+//    {
+////        violinStrings[i]->setBow(state[i]);
+////        violinStrings[i]->setVb(Vb[i]);
+////        violinStrings[i]->setFb(Fb[i]);
+////        violinStrings[i]->setBowPos(xpos[i]);
+//    }
 
 }
 
@@ -157,9 +161,11 @@ void MainComponent::resized()
 
 void MainComponent::mouseDown(const MouseEvent &e)
 {
-    for (int j = 0; j < numStrings; ++j)
+    if (e.x < getWidth() / 2.0)
     {
-        violinStrings[j]->setBow(true);
+        violinStrings[0]->setBow(true);
+    } else {
+        violinStrings[1]->setBow(true);
     }
 }
 
