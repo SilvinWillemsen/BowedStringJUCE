@@ -1,1 +1,9 @@
 Builds/
+JuceLibraryCode/
+# mac fs metadata
+.DS_Store
+.vscode
+
+.m~
+.cpp~
+.h~
