@@ -32,7 +32,6 @@ ViolinString::ViolinString (double freq, double fs) : fs (fs), freq (freq)
                      + 16.0 * kappa * kappa * k * k)) * 0.5);
     
     N = floor (1.0 / h);                    // Number of gridpoints
-    N = 80; //Set N for tuning
     h = 1.0 / N;                            // Recalculate gridspacing
 
     // Initialise vectors
@@ -110,11 +109,6 @@ void ViolinString::resized()
 
 double ViolinString::bow()
 {
-//    double gammaChange = gamma + 5 * sin (12 * double_Pi * t / fs);
-//    ++t;
-//    lambdaSq = pow (gammaChange * k / h, 2);
-//    Vb = 0.2 * sin (12.0 * double_Pi * t / fs);
-    ++t;
     newtonRaphson();
     double excitation = k * k * (1 / h) * Fb * BM * q * exp (-a * q * q);
     for (int l = 2; l < N - 2; ++l)
@@ -126,30 +120,21 @@ double ViolinString::bow()
                                                 - (uPrev[l+1] - 2 * uPrev[l] + uPrev[l-1]))) / (1 + s0 * k);
         if (l == bp && isBowing == true)
         {
-            count = 0;
             uNext[l] = uNext[l] - excitation;
         }
     }
-    if (fingerOn)
-    {
-        int fingerPos = floor(fp * N);
-        if (ff > 1)
-        {
-            std::cout << "wait" << std::endl;
-        }
-        uNext[fingerPos] = uNext[fingerPos] * ff;
-    }
+//    if (fingerOn)
+//    {
+//        int fingerPos = floor(fp * N);
+//        if (ff > 1)
+//        {
+//            std::cout << "wait" << std::endl;
+//        }
+//        uNext[fingerPos] = uNext[fingerPos] * ff;
+//    }
     
     uPrev = u;
     u = uNext;
-    if (!isBowing)
-    {
-        ++count;
-        if (count > fs * 3)
-        {
-//            deactivate();
-        }
-    }
     return uNext[pickup];
 }
 

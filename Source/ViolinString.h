@@ -38,10 +38,6 @@ public:
     void setVb (double val) { Vb = val; }
     void setFb (double val) { Fb = val; }
     void setBowPos (double val) { bp = floor (val * N); }
-    
-    bool isActive() { return active; };
-    void activate() { active = true; };
-    void deactivate() { active = false; };
 
 private:
 

@@ -17,8 +17,7 @@
     your controls and content.
 */
 class MainComponent : public AudioAppComponent,
-                      public HighResolutionTimer,
-                      public KeyListener
+                      public HighResolutionTimer
 {
 public:
   //==============================================================================
@@ -38,10 +37,7 @@ public:
   void mouseUp(const MouseEvent &e) override;
   void mouseDrag(const MouseEvent &e) override;
   void hiResTimerCallback() override;
-
-  virtual bool keyPressed(const KeyPress &key, Component *originatingComponent) override;
-  virtual bool keyStateChanged(bool isKeyDown, Component *originatingComponent) override;
-
+    
 private:
   //==============================================================================
   double fs;
@@ -55,12 +51,6 @@ private:
   static const unsigned int amountOfSensels = 2;
 
   static const unsigned int numStrings = 2;
-  int octave = 0;
-  vector<const char> keys = {'A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K'};
-
-  vector<ViolinString *> activeStrings;
-  int polyphony;
-  int currentPoly = 0;
 
   array<float, amountOfSensels> force = {0.0};
   array<float, amountOfSensels> xpos = {0.0};
