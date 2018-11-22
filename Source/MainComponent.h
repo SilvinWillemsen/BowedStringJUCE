@@ -44,7 +44,7 @@ public:
 
     void setMidiInput (int index);
     
-    void logMessage (const String& m);
+//    void logMessage (const String& m);
     
     static String getMidiMessageDescription (const MidiMessage& m)
     {
@@ -78,9 +78,9 @@ public:
     
     void handleNoteOff (MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity) override;
     
-    void postMessageToList (const MidiMessage& message, const String& source);
-    
-    void addMessageToList (const MidiMessage& message, const String& source);
+//    void postMessageToList (const MidiMessage& message, const String& source);
+//
+//    void addMessageToList (const MidiMessage& message, const String& source);
    
     
     
@@ -115,23 +115,23 @@ private:
     TextEditor midiMessagesBox;
     double startTime;
     
-    class IncomingMessageCallback   : public CallbackMessage
-    {
-    public:
-        IncomingMessageCallback (MainComponent* o, const MidiMessage& m, const String& s)
-        : owner (o), message (m), source (s)
-        {}
-        
-        void messageCallback() override
-        {
-            if (owner != nullptr)
-                owner->addMessageToList (message, source);
-        }
-        
-        Component::SafePointer<MainComponent> owner;
-        MidiMessage message;
-        String source;
-    };
-    
+//    class IncomingMessageCallback   : public CallbackMessage
+//    {
+//    public:
+//        IncomingMessageCallback (MainComponent* o, const MidiMessage& m, const String& s)
+//        : owner (o), message (m), source (s)
+//        {}
+//        
+//        void messageCallback() override
+//        {
+//            if (owner != nullptr)
+//                owner->addMessageToList (message, source);
+//        }
+//        
+//        Component::SafePointer<MainComponent> owner;
+//        MidiMessage message;
+//        String source;
+//    };
+    int lastNoteOn = -1;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

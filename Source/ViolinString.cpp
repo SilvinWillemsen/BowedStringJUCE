@@ -85,6 +85,12 @@ void ViolinString::resized()
 
 }
 
+void ViolinString::setFrequency (double val)
+{
+    double gammaChange = gamma * (1 + val);
+    lambdaSq = pow (gammaChange * k / h, 2);
+}
+
 double ViolinString::bow()
 {
 //    double gammaChange = gamma + 5 * sin (12 * double_Pi * t / fs);

@@ -9,7 +9,7 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (25), octave (0), polyphony (12),
+MainComponent::MainComponent() : minOut (-1.0), maxOut (1.0), numStrings (25), octave (0), polyphony (numStrings),
     keyboardComponent (keyboardState, MidiKeyboardComponent::horizontalKeyboard),
     startTime (Time::getMillisecondCounterHiRes() * 0.001)
 {
@@ -237,11 +237,11 @@ bool MainComponent::keyStateChanged(bool isKeyDown, Component *originatingCompon
     return false;
 }
 
-void MainComponent::logMessage(const String &m)
-{
-    midiMessagesBox.moveCaretToEnd();
-    midiMessagesBox.insertTextAtCaret (m + newLine);
-}
+//void MainComponent::logMessage(const String &m)
+//{
+//    midiMessagesBox.moveCaretToEnd();
+//    midiMessagesBox.insertTextAtCaret (m + newLine);
+//}
 
 void MainComponent::setMidiInput(int index)
 {
@@ -259,12 +259,20 @@ void MainComponent::handleIncomingMidiMessage(MidiInput *source, const MidiMessa
 {
     const ScopedValueSetter<bool> scopedInputFlag (isAddingFromMidiInput, true);
     keyboardState.processNextMidiEvent (message);
-    postMessageToList (message, source->getName());
-    if (message.isAftertouch())
+//    postMessageToList (message, source->getName());
+    if (message.isNoteOn())
     {
-        
-//        int note = MidiMessage::getMidiNoteName (message.getNoteNumber(), true, true, 3);
-        std::cout << message.getAfterTouchValue() << std::endl;
+        lastNoteOn = message.getNoteNumber() - 48;
+    }
+    
+    if (message.isNoteOff())
+    {
+        violinStrings[message.getNoteNumber() - 48]->setFrequency (0);
+    }
+    
+    if (message.isChannelPressure())
+    {
+        violinStrings[lastNoteOn]->setFrequency (message.getChannelPressureValue() / 1280.0);
     }
 }
 
@@ -273,6 +281,8 @@ void MainComponent::handleNoteOn(MidiKeyboardState *, int midiChannel, int midiN
     if (midiNoteNumber >= 48 && midiNoteNumber <= 73)
     {
         int idx = midiNoteNumber - 48;
+        violinStrings[idx]->setFb (velocity * 100);
+        violinStrings[idx]->setVb (velocity * 0.3);
         violinStrings[idx]->setBow(true);
         if (!violinStrings[idx]->isActive())
         {
@@ -303,7 +313,7 @@ void MainComponent::handleNoteOn(MidiKeyboardState *, int midiChannel, int midiN
     {
         auto m = MidiMessage::noteOn (midiChannel, midiNoteNumber, velocity);
         m.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
-        postMessageToList (m, "On-Screen Keyboard");
+//        postMessageToList (m, "On-Screen Keyboard");
     }
 }
 
@@ -318,32 +328,32 @@ void MainComponent::handleNoteOff(MidiKeyboardState *, int midiChannel, int midi
     {
         auto m = MidiMessage::noteOff (midiChannel, midiNoteNumber);
         m.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
-        postMessageToList (m, "On-Screen Keyboard");
+//        postMessageToList (m, "On-Screen Keyboard");
     }
 }
 
-void MainComponent::postMessageToList(const MidiMessage &message, const String &source)
-{
-    (new IncomingMessageCallback (this, message, source))->post();
-}
-
-void MainComponent::addMessageToList(const MidiMessage &message, const String &source)
-{
-    auto time = message.getTimeStamp() - startTime;
-    
-    auto hours   = ((int) (time / 3600.0)) % 24;
-    auto minutes = ((int) (time / 60.0)) % 60;
-    auto seconds = ((int) time) % 60;
-    auto millis  = ((int) (time * 1000.0)) % 1000;
-    
-    auto timecode = String::formatted ("%02d:%02d:%02d.%03d",
-                                       hours,
-                                       minutes,
-                                       seconds,
-                                       millis);
-    
-    auto description = getMidiMessageDescription (message);
-    
-    String midiMessageString (timecode + "  -  " + description + " (" + source + ")"); // [7]
-    logMessage (midiMessageString);
-}
+//void MainComponent::postMessageToList(const MidiMessage &message, const String &source)
+//{
+//    (new IncomingMessageCallback (this, message, source))->post();
+//}
+//
+//void MainComponent::addMessageToList(const MidiMessage &message, const String &source)
+//{
+//    auto time = message.getTimeStamp() - startTime;
+//    
+//    auto hours   = ((int) (time / 3600.0)) % 24;
+//    auto minutes = ((int) (time / 60.0)) % 60;
+//    auto seconds = ((int) time) % 60;
+//    auto millis  = ((int) (time * 1000.0)) % 1000;
+//    
+//    auto timecode = String::formatted ("%02d:%02d:%02d.%03d",
+//                                       hours,
+//                                       minutes,
+//                                       seconds,
+//                                       millis);
+//    
+//    auto description = getMidiMessageDescription (message);
+//    
+//    String midiMessageString (timecode + "  -  " + description + " (" + source + ")"); // [7]
+//    logMessage (midiMessageString);
+//}

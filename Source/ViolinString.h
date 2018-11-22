@@ -26,6 +26,8 @@ public:
     
     double bow();
     
+    void setFrequency (double val);
+    
     void newtonRaphson();
     double getOutput();
     
