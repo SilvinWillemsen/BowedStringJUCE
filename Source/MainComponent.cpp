@@ -68,10 +68,10 @@ void MainComponent::hiResTimerCallback()
         sensel->check();
 
         unsigned int fingerCount = sensel->contactAmount;
-
+        int index = sensel->senselIndex;
         for (int f = 0; f < fingerCount; f++)
         {
-            int index = sensel->senselIndex;
+            
             state[index] = sensel->fingers[f].state;
             xpos[index] = sensel->fingers[f].x;
             ypos[index] = sensel->fingers[f].y;
