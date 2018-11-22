@@ -1,0 +1,3 @@
+[submodule "SenselWrapper"]
+	path = SenselWrapper
+	url = https://github.com/SMC-AAU-CPH/SenselWrapper
