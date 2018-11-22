@@ -19,7 +19,7 @@ MainComponent::MainComponent() : minOut(-1.0), maxOut(1.0), polyphony(5)
 
     // specify the number of input and output channels that we want to open
     setAudioChannels(0, 2);
-    startTimer(1000.0/150.0);
+    startTimer(1000.0 / 150.0);
     setWantsKeyboardFocus(true);
     addKeyListener(this);
 }
@@ -51,7 +51,7 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
         violinStrings[i]->activate();
     }
 
-    activeStrings.resize(polyphony, violinStrings[0]);
+    //activeStrings.resize(polyphony, violinStrings[0]);
 
     for (int i = 0; i < amountOfSensels; i++)
         sensels.add(new Sensel(i)); // chooses the device in the sensel device list
@@ -59,87 +59,36 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
 
 void MainComponent::hiResTimerCallback()
 {
-    /*// check sensel
-    sensel.check();
-    unsigned int size = sensel.contactAmount;
-
     double maxVb = 0.2;
-    double Vb = 0.0;
-    double Fb = force * 100;
-
-    double finger2X = 0.0;
-    double finger2Force = 0.0;
-    bool state1 = false;
-    bool state2 = false;
-    
-    for (int f = 0; f < size; f++)
-    {
-        ///</if (sensel.mFingers[f].state.load())
-        //    cout << "Finger[" << f << "] ID: " << sensel.mFingers[f].fingerID.load() << "\n";
-
-        
-        int index1 = sensel.fingers[f].fingerID;
-        if (index1 == 0) // first press is indexed 0
-        {
-            state1 = sensel.fingers[f].state;
-            xpos = sensel.fingers[f].x;
-            ypos = sensel.fingers[f].y;
-            
-            force = sensel.fingers[f].force * 10;
-
-            Vb = sensel.fingers[f].delta_y * maxVb;
-            Fb = force * 100;
-
-            //cout << "Finger[" << 0 << "] ID: " << sensel.mFingers[0].fingerID.load() << "\n";
-            //cout << "Finger[" << 0 << "] delta x: " << sensel.mFingers[0].delta_x.load() << "\n";
-            //secout << "Finger[" << 0 << "] delta y: " << sensel.mFingers[0].delta_y.load() << "\n";
-        }
-
-        int index2 = sensel.fingers[f].fingerID;
-        
-        
-        
-        if (index2 == 1)
-        {
-            state2 = sensel.fingers[f].state;
-            finger2X = sensel.fingers[f].x;
-            finger2Force = sensel.fingers[f].force;
-
-            //violinStrings[0]->setFingerOn(true);
-        }
-
-        //cout << "Finger[" << 0 << "] ID: " << sensel.mFingers[0].fingerID.load() << "\n";
-    }*/
-    double maxVb = 0.2;
-    double Vb = 0.0;
-    double Fb = force * 100;
-
-    double finger2X = 0.0;
-    double finger2Force = 0.0;
-    bool state1 = false;
-    bool state2 = false;
+   
+    // bool state2 = false;
 
     for (auto sensel : sensels)
     {
         sensel->check();
-        
-        unsigned int fingerCount = sensel->contactAmount;
-        
-        for (int f = 0; f < fingerCount; f++)
-            if (sensel->fingers[f].state)
-                cout << "Sensel[" << sensel->senselIndex << "] Finger ID: " << sensel->fingers[f].fingerID << "\n";
 
+        unsigned int fingerCount = sensel->contactAmount;
+
+        for (int f = 0; f < fingerCount; f++)
+        {
+            int index = sensel->senselIndex;
+            state[index] = sensel->fingers[f].state;
+            xpos[index] = sensel->fingers[f].x;
+            ypos[index] = sensel->fingers[f].y;
+            Vb[index] = sensel->fingers[f].delta_y * maxVb;
+            Fb[index] = sensel->fingers[f].force * 1000;
+        }
+        //cout << "Sensel[" << sensel->senselIndex << "] Finger ID: " << sensel->fingers[f].fingerID << "\n";
     }
-    for (auto string : violinStrings)
+   
+    for (int i = 0; i < numStrings; i++)
     {
-        string->setBow(state1);
-        string->setVb(Vb);
-        string->setFb(Fb);
-        string->setBowPos(xpos);
-        string->setFingerPoint(finger2X);
-        string->setFingerForce(finger2Force);
-        string->setFingerOn(state2);
+        violinStrings[i]->setBow(state[i]);
+        violinStrings[i]->setVb(Vb[i]);
+        violinStrings[i]->setFb(Fb[i]);
+        violinStrings[i]->setBowPos(xpos[i]);
     }
+
 }
 
 void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)

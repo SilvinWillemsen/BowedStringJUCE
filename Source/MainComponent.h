@@ -46,15 +46,15 @@ private:
   //==============================================================================
   double fs;
   double bufferSize;
-  
+
   float minOut;
   float maxOut;
   OwnedArray<ViolinString> violinStrings;
 
   OwnedArray<Sensel> sensels;
-  const unsigned int amountOfSensels = 2; 
+  static const unsigned int amountOfSensels = 2;
 
-  const int numStrings = 2;
+  static const unsigned int numStrings = 2;
   int octave = 0;
   vector<const char> keys = {'A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K'};
 
@@ -62,9 +62,12 @@ private:
   int polyphony;
   int currentPoly = 0;
 
-  float force = 0.0;
-  float xpos = 0.0f;
-  float ypos = 0.0f;
+  array<float, amountOfSensels> force = {0.0};
+  array<float, amountOfSensels> xpos = {0.0};
+  array<float, amountOfSensels> ypos = {0.0};
+  array<float, amountOfSensels> Vb = {0.0};
+  array<float, amountOfSensels> Fb = {0.0};
+  array<bool, amountOfSensels> state = {0};
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };
