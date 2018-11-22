@@ -10,7 +10,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ViolinString.h"
-#include "SenselWrapper.h"
+#include "../SenselWrapper/SenselWrapper.h"
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all

@@ -19,7 +19,7 @@ MainComponent::MainComponent() : minOut(-1.0), maxOut(1.0), numStrings(1), octav
 
     // specify the number of input and output channels that we want to open
     setAudioChannels(0, 2);
-    startTimer(6.666);
+    startTimer(1000.0/150.0);
     setWantsKeyboardFocus(true);
     addKeyListener(this);
 }
@@ -57,7 +57,7 @@ void MainComponent::hiResTimerCallback()
 {
     // check sensel
     sensel.check();
-    unsigned long size = sensel.mFingers.size();
+    unsigned int size = sensel.contactAmount;
 
     double maxVb = 0.2;
     double Vb = 0.0;
@@ -74,16 +74,16 @@ void MainComponent::hiResTimerCallback()
         //    cout << "Finger[" << f << "] ID: " << sensel.mFingers[f].fingerID.load() << "\n";
 
         
-        int index1 = sensel.mFingers[f].fingerID.load();
+        int index1 = sensel.fingers[f].fingerID;
         if (index1 == 0) // first press is indexed 0
         {
-            state1 = sensel.mFingers[f].state.load();
-            xpos = sensel.mFingers[f].x.load();
-            ypos = sensel.mFingers[f].y.load();
+            state1 = sensel.fingers[f].state;
+            xpos = sensel.fingers[f].x;
+            ypos = sensel.fingers[f].y;
             
-            force = sensel.mFingers[f].force.load() * 10;
+            force = sensel.fingers[f].force * 10;
 
-            Vb = sensel.mFingers[f].delta_y.load() * maxVb;
+            Vb = sensel.fingers[f].delta_y * maxVb;
             Fb = force * 100;
 
             //cout << "Finger[" << 0 << "] ID: " << sensel.mFingers[0].fingerID.load() << "\n";
@@ -91,15 +91,15 @@ void MainComponent::hiResTimerCallback()
             //secout << "Finger[" << 0 << "] delta y: " << sensel.mFingers[0].delta_y.load() << "\n";
         }
 
-        int index2 = sensel.mFingers[f].fingerID.load();
+        int index2 = sensel.fingers[f].fingerID;
         
         
         
         if (index2 == 1)
         {
-            state2 = sensel.mFingers[f].state.load();
-            finger2X = sensel.mFingers[f].x.load();
-            finger2Force = sensel.mFingers[f].force.load();
+            state2 = sensel.fingers[f].state;
+            finger2X = sensel.fingers[f].x;
+            finger2Force = sensel.fingers[f].force;
 
             //violinStrings[0]->setFingerOn(true);
         }
