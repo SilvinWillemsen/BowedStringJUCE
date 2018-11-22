@@ -46,7 +46,7 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
     {
         violinStrings.add(new ViolinString(110.0 * (i + 1), fs));
     }
-    
+
     for (int i = 0; i < amountOfSensels; i++)
         sensels.add(new Sensel(i)); // chooses the device in the sensel device list
 }
@@ -59,35 +59,34 @@ void MainComponent::hiResTimerCallback()
     {
         if (sensel->senselDetected)
         {
-        sensel->check();
+            sensel->check();
 
-        unsigned int fingerCount = sensel->contactAmount;
-        int index = sensel->senselIndex;
-        for (int f = 0; f < fingerCount; f++)
-        {
-            
-            state[index] = sensel->fingers[f].state;
-            xpos[index] = sensel->fingers[f].x;
-            ypos[index] = sensel->fingers[f].y;
-            Vb[index] = sensel->fingers[f].delta_y * maxVb;
-            Fb[index] = sensel->fingers[f].force * 1000;
-        }
-        
-        violinStrings[index]->setBow(state[index]);
-        violinStrings[index]->setVb(Vb[index]);
-        violinStrings[index]->setFb(Fb[index]);
-        violinStrings[index]->setBowPos(xpos[index]);
+            unsigned int fingerCount = sensel->contactAmount;
+            int index = sensel->senselIndex;
+            for (int f = 0; f < fingerCount; f++)
+            {
+
+                state[index] = sensel->fingers[f].state;
+                xpos[index] = sensel->fingers[f].x;
+                ypos[index] = sensel->fingers[f].y;
+                Vb[index] = sensel->fingers[f].delta_y * maxVb;
+                Fb[index] = sensel->fingers[f].force * 1000;
+            }
+
+            violinStrings[index]->setBow(state[index]);
+            violinStrings[index]->setVb(Vb[index]);
+            violinStrings[index]->setFb(Fb[index]);
+            violinStrings[index]->setBowPos(xpos[index]);
         }
     }
-   
-//    for (int i = 0; i < numStrings; i++)
-//    {
-////        violinStrings[i]->setBow(state[i]);
-////        violinStrings[i]->setVb(Vb[i]);
-////        violinStrings[i]->setFb(Fb[i]);
-////        violinStrings[i]->setBowPos(xpos[i]);
-//    }
 
+    //    for (int i = 0; i < numStrings; i++)
+    //    {
+    ////        violinStrings[i]->setBow(state[i]);
+    ////        violinStrings[i]->setVb(Vb[i]);
+    ////        violinStrings[i]->setFb(Fb[i]);
+    ////        violinStrings[i]->setBowPos(xpos[i]);
+    //    }
 }
 
 void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
@@ -164,21 +163,23 @@ void MainComponent::mouseDown(const MouseEvent &e)
     if (e.x < getWidth() / 2.0)
     {
         violinStrings[0]->setBow(true);
-    } else {
+    }
+    else
+    {
         violinStrings[1]->setBow(true);
     }
 }
 
 void MainComponent::mouseDrag(const MouseEvent &e)
 {
-//    double maxVb = 0.2;
-//    double Vb = (e.y - getHeight() * 0.5) / (static_cast<double>(getHeight() * 0.5)) * maxVb;
-//    double Fb = e.x / (static_cast<double>(getWidth())) * 100;
-//    for (int j = 0; j < numStrings; ++j)
-//    {
-//        violinStrings[j]->setVb(Vb);
-//        violinStrings[j]->setFb(Fb);
-//    }
+    //    double maxVb = 0.2;
+    //    double Vb = (e.y - getHeight() * 0.5) / (static_cast<double>(getHeight() * 0.5)) * maxVb;
+    //    double Fb = e.x / (static_cast<double>(getWidth())) * 100;
+    //    for (int j = 0; j < numStrings; ++j)
+    //    {
+    //        violinStrings[j]->setVb(Vb);
+    //        violinStrings[j]->setFb(Fb);
+    //    }
 }
 
 void MainComponent::mouseUp(const MouseEvent &e)
