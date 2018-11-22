@@ -46,14 +46,16 @@ private:
   //==============================================================================
   double fs;
   double bufferSize;
-  Sensel sensel;
-
+  
   float minOut;
   float maxOut;
   OwnedArray<ViolinString> violinStrings;
 
-  int numStrings;
-  int octave;
+  OwnedArray<Sensel> sensels;
+  const unsigned int amountOfSensels = 2; 
+
+  const int numStrings = 2;
+  int octave = 0;
   vector<const char> keys = {'A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K'};
 
   vector<ViolinString *> activeStrings;
@@ -63,7 +65,6 @@ private:
   float force = 0.0;
   float xpos = 0.0f;
   float ypos = 0.0f;
-
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

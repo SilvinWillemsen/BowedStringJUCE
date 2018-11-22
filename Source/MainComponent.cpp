@@ -10,7 +10,7 @@
 
 //==============================================================================
 
-MainComponent::MainComponent() : minOut(-1.0), maxOut(1.0), numStrings(1), octave(0), polyphony(5)
+MainComponent::MainComponent() : minOut(-1.0), maxOut(1.0), polyphony(5)
 {
     // Make sure you set the size of the component after
     // you add any child components.
@@ -50,12 +50,16 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
         violinStrings.add(new ViolinString(196.0 * (i + 1) * 0.95, fs));
         violinStrings[i]->activate();
     }
+
     activeStrings.resize(polyphony, violinStrings[0]);
+
+    for (int i = 0; i < amountOfSensels; i++)
+        sensels.add(new Sensel(i)); // chooses the device in the sensel device list
 }
 
 void MainComponent::hiResTimerCallback()
 {
-    // check sensel
+    /*// check sensel
     sensel.check();
     unsigned int size = sensel.contactAmount;
 
@@ -105,6 +109,26 @@ void MainComponent::hiResTimerCallback()
         }
 
         //cout << "Finger[" << 0 << "] ID: " << sensel.mFingers[0].fingerID.load() << "\n";
+    }*/
+    double maxVb = 0.2;
+    double Vb = 0.0;
+    double Fb = force * 100;
+
+    double finger2X = 0.0;
+    double finger2Force = 0.0;
+    bool state1 = false;
+    bool state2 = false;
+
+    for (auto sensel : sensels)
+    {
+        sensel->check();
+        
+        unsigned int fingerCount = sensel->contactAmount;
+        
+        for (int f = 0; f < fingerCount; f++)
+            if (sensel->fingers[f].state)
+                cout << "Sensel[" << sensel->senselIndex << "] Finger ID: " << sensel->fingers[f].fingerID << "\n";
+
     }
     for (auto string : violinStrings)
     {
